@@ -1,13 +1,14 @@
 // Функция для проверки длины строки
 const checkStringLength = (string, maxLength) => {
   if (string.length <= maxLength) {
-    console.log(true);
+    // console.log(true);
     return true;
   } else {
-    console.log(false);
+    // console.log(false);
     return false;
   }
-}
+};
+console.log(checkStringLength('Hello', 10));
 
 // Функция для проверки, является ли строка палиндромом
 function isPalindrom(string) {
@@ -18,9 +19,11 @@ function isPalindrom(string) {
   for (let i = string.length - 1; i >= 0; i--) {
     reversed += string[i];
   }
-  console.log(string === reversed);
+  // console.log(string === reversed);
   return string === reversed;
 }
+console.log(isPalindrom('А роза упала на лапу Азора'));
+
 
 // Дополнительное задание
 function extractNumber(string) {
@@ -30,7 +33,7 @@ function extractNumber(string) {
 
   for (let i = 0; i < string.length; i++) {
     const currentSymbol = string[i];
-    const parsed = parseInt(currentSymbol);
+    const parsed = parseInt(currentSymbol, 10);
 
     if (!Number.isNaN(parsed)) {
       result += currentSymbol;
@@ -40,5 +43,6 @@ function extractNumber(string) {
   if (result === '') {
     return NaN;
   }
-  return parseInt(result);
+  return parseInt(result, 10);
 }
+console.log(extractNumber('abc123def'));
