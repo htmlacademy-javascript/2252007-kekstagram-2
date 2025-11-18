@@ -120,5 +120,3 @@ console.log(createPictureDescription());
 const createPictures = () => Array.from({ length: PICTURE_COUNT }, createPictureDescription);
 
 console.log(createPictures());
-
-
