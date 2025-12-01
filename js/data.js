@@ -33,22 +33,22 @@ const createComments = () => {
 
 // Создать один объект фотографию, включающий: ID, URL, description, likes and Comments
 const createPictureDescription = (i) => {
-  const randomId = getRandomInteger(1, PICTURE_COUNT);
+  // const randomId = getRandomInteger(1, PICTURE_COUNT);
   return {
-    id: i+1,
-    url: `photos/${i+1}.jpg`,
+    id: i + 1,
+    url: `photos/${i + 1}.jpg`,
     description: getRandomArrayElement(DESCRIPTIONS),
     likes: getRandomInteger(LIKE_MIN_COUNT, LIKE_MAX_COUNT),
     comments: createComments(),
   };
 };
 
-console.log(createPictureDescription());
+// console.log(createPictureDescription());
 
 // Создать массив из 25 фотографий
 const createPictures = () => Array.from({ length: PICTURE_COUNT }, (_, i) => createPictureDescription(i));
 
-console.log(createPictures());
+// console.log(createPictures());
 
 // Export
 export { createPictures };
