@@ -17,3 +17,4 @@ export const renderCards = (photos) => {
 
   similarPicturesList.appendChild(similarListFragment);
 };
+
