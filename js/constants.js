@@ -1,3 +1,5 @@
+export const COMMENTS_PORTION = 5;
+
 const PICTURE_COUNT = 25;
 
 const LIKE_MIN_COUNT = 15;

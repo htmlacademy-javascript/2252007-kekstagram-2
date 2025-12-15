@@ -1,3 +1,5 @@
+import { COMMENTS_PORTION } from './constants.js';
+
 const modalTag = document.querySelector('.big-picture');
 const closeButtonTag = document.querySelector('#picture-cancel');
 const bodyTag = document.body;
@@ -5,83 +7,84 @@ const imageTag = modalTag.querySelector('.big-picture__img img');
 const descriptionTag = modalTag.querySelector('.social__caption');
 const likesTag = modalTag.querySelector('.likes-count');
 const commentsTag = modalTag.querySelector('.social__comments');
-
-const socialCommentCount = modalTag.querySelector('.social__comment-count');
+const commentsTemplate = modalTag.querySelector('.social__comment');
+const shownComment = modalTag.querySelector('.social__comment-shown-count');
+const totalComment = modalTag.querySelector('.social__comment-total-count');
 const commentsLoader = modalTag.querySelector('.comments-loader');
 
-// переменные состояния для комментариев
 let allComments = [];
 let shownComments = 0;
-const COMMENTS_PORTION = 5;
 
-// функция отрисовки следующих пяти комментариев
-function renderNextComments() {
-  const next = allComments.slice(shownComments, shownComments + COMMENTS_PORTION);
+const showModal = () => {
+  modalTag.classList.remove('hidden');
+  bodyTag.classList.add('modal-open');
+};
 
-  next.forEach(({ avatar, name, message }) => {
-    const li = document.createElement('li');
-    li.className = 'social__comment';
+const hideModal = () => {
+  modalTag.classList.add('hidden');
+  bodyTag.classList.remove('modal-open');
+};
 
-    li.innerHTML = `
-      <img class="social__picture" src="${avatar}" alt="${name}" width="35" height="35">
-      <p class="social__text">${message}</p>
-    `;
+const renderComment = ({ avatar, message, name }) => {
+  const newComment = commentsTemplate.cloneNode(true);
+  const userpic = newComment.querySelector('.social__picture');
+  userpic.src = avatar;
+  userpic.alt = name;
+  newComment.querySelector('.social__text').textContent = message;
+  return newComment;
+};
 
-    commentsTag.appendChild(li);
-  });
+const renderStatistic = () => {
+  shownComment.textContent = shownComments;
+};
 
-  shownComments += next.length;
-
-  // обновить счётчик "x из y"
-  modalTag.querySelector('.social__comment-shown-count').textContent = shownComments;
-  modalTag.querySelector('.social__comment-total-count').textContent = allComments.length;
-
-  // если все комментарии показаны — прячем кнопку
-  if (shownComments >= allComments.length) {
+const renderLoader = () => {
+  if (!allComments.length) {
     commentsLoader.classList.add('hidden');
+  } else {
+    commentsLoader.classList.remove('hidden');
   }
 }
 
-export const openModal = ({ url, description, likes, comments }) => {
-  modalTag.classList.remove('hidden');
-  bodyTag.classList.add('modal-open');
+const renderComments = () => {
+  const fragment = document.createDocumentFragment();
+
+  allComments.splice(0, COMMENTS_PORTION).forEach((item) => {
+    fragment.append(renderComment(item));
+
+    shownComments++;
+  });
+  commentsTag.append(fragment);
+  renderStatistic();
+  renderLoader();
+};
+
+const renderModal = ({ url, description, likes, comments }) => {
   imageTag.src = url;
   descriptionTag.textContent = description;
-  likesTag.textContent = String(likes);
-  // commentsTag.innerHTML = comments.map(({ avatar, name, message }) => `
-  //   <li class="social__comment">
-  //     <img class="social__picture" src="${avatar}" alt="${name}" width="35" height="35">
-  //     <p class="social__text">${message}</p>
-  //   </li>
-  // `).join('');
-
-  // socialCommentCount.classList.add('hidden');
-  // commentsLoader.classList.add('hidden');
-
-  // очистить старые комментарии
+  likesTag.textContent = likes;
   commentsTag.innerHTML = '';
+  totalComment.textContent = comments.length;
 
-  // сохранить список комментариев
-  allComments = comments;
+  renderComments();
+};
+
+export const openModal = ({ url, description, likes, comments }) => {
+  allComments = [...comments];
   shownComments = 0;
 
-  // показать первые 5 комментариев
-  renderNextComments();
+  showModal();
+  renderModal({ url, description, likes, comments })
 
   // Вешаем обработчик ESC только один раз, при открытии
   document.addEventListener('keydown', onEscKeyDown);
 };
 
-// Общая функция закрытия
 const closeModal = () => {
-  modalTag.classList.add('hidden');
-  bodyTag.classList.remove('modal-open');
-
-  commentsTag.innerHTML = '';
+  hideModal();
   document.removeEventListener('keydown', onEscKeyDown);
 };
 
-// Обработчик ESC
 function onEscKeyDown(evt) {
   if (evt.key === 'Escape') {
     evt.preventDefault();
@@ -89,8 +92,10 @@ function onEscKeyDown(evt) {
   }
 }
 
-// обработчик кнопки “Загрузить ещё”
-commentsLoader.addEventListener('click', renderNextComments);
+commentsLoader.addEventListener('click', () => {
+  renderComments();
+});
 
-// Закрытие по кнопке
-closeButtonTag.addEventListener('click', closeModal);
+closeButtonTag.addEventListener('click', () => {
+  closeModal();
+});
